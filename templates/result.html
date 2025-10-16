@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 30px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resume Analysis Result</h1>
+    <p><strong>Score:</strong> {{ score }}%</p>
+    <p><strong>Missing Keywords:</strong></p>
+    <ul>
+        {% for keyword in missing_keywords %}
+        <li>{{ keyword }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/">Analyze Another Resume</a>
+
+    <script>
+        // Placeholder for future interactivity
+        console.log("Result page loaded");
+    </script>
+</body>
+</html>

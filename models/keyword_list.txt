@@ -1,0 +1,29 @@
+Python
+Java
+C++
+SQL
+JavaScript
+HTML
+CSS
+Flask
+React
+Node.js
+Machine Learning
+Deep Learning
+NLP
+Pandas
+NumPy
+TensorFlow
+Scikit-learn
+AWS
+Azure
+Docker
+Kubernetes
+CI/CD
+Communication
+Leadership
+Teamwork
+Project Management
+Git
+Linux
+Data Analysis
