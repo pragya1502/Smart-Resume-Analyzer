@@ -1,50 +1,197 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Smart Resume Analyzer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 30px;
-            background-color: #f9f9f9;
-        }
-        h1 {
-            color: #333;
-        }
-        form {
-            margin-top: 20px;
-        }
-        input[type=file] {
-            margin: 10px 0;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Resume Analyzer — Upload</title>
+  <style>
+    :root{
+      --bg:#0b0d0f;
+      --panel:#0f1416;
+      --muted:#9aa3ad;
+      --accent:#7c5cff;
+      --card:#111418;
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      --maxw:980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(124,92,255,0.06), transparent 8%),
+                  linear-gradient(180deg, #071014 0%, #0b0d0f 100%);
+      color:#e6eef6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:36px 18px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .wrap{width:100%; max-width:var(--maxw);}
+
+    /* NAV */
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 22px; background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-radius:12px; margin-bottom:22px;
+      box-shadow: 0 6px 30px rgba(2,6,10,0.6), inset 0 -1px 0 rgba(255,255,255,0.02);
+      backdrop-filter: blur(6px);
+    }
+    .brand{font-weight:700; letter-spacing:1px; font-size:16px; color: #fff;}
+    .navlinks{display:flex; gap:18px; align-items:center}
+    .nav a{color:var(--muted); text-decoration:none; font-size:14px}
+    .nav a:hover{color:#fff}
+
+    /* HERO / UPLOAD CARD */
+    .grid{display:grid; grid-template-columns:1fr 420px; gap:26px; align-items:start;}
+    @media (max-width:980px){ .grid{grid-template-columns:1fr;}}
+    .hero{
+      padding:28px; border-radius:var(--radius); background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+      box-shadow: 0 10px 40px rgba(2,6,10,0.6);
+    }
+    .hero h1{margin:0; font-size:44px; line-height:1; color:#fff}
+    .hero p{color:var(--muted); margin-top:12px; font-size:16px}
+
+    .how{
+      display:flex; gap:18px; margin-top:22px; flex-wrap:wrap;
+    }
+    .step{
+      flex:1 1 30%;
+      background:var(--glass); padding:16px; border-radius:12px; min-width:160px; text-align:left;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .step h4{margin:6px 0 8px; font-size:16px}
+    .step p{margin:0; color:var(--muted); font-size:14px}
+
+    /* Right column (upload card) */
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));
+      padding:22px; border-radius:var(--radius); box-shadow: 0 8px 30px rgba(2,6,10,0.6);
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .card h3{margin:0 0 8px; font-size:18px}
+    .filewrap{background:#0b0f12; padding:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.02); margin-bottom:14px;}
+    .filewrap input[type=file]{display:none}
+    .btn-file{
+      display:flex; align-items:center; gap:12px; justify-content:center;
+      background:linear-gradient(90deg,var(--accent), #5f4bff); color:#fff; padding:12px 14px; border-radius:10px;
+      cursor:pointer; border:none; font-weight:600; box-shadow: 0 8px 20px rgba(124,92,255,0.12);
+    }
+    .file-info{margin-top:10px; color:var(--muted); font-size:13px; text-align:left}
+
+    .analyze-btn{
+      margin-top:14px; width:100%; display:inline-block; text-align:center; padding:12px 16px; border-radius:10px;
+      background: transparent; border:1px solid rgba(124,92,255,0.16); color:var(--accent); font-weight:700; cursor:pointer;
+      transition: all .18s ease;
+    }
+    .analyze-btn:hover{transform:translateY(-3px); box-shadow: 0 10px 28px rgba(92,64,255,0.12); color:#fff; background:linear-gradient(90deg,var(--accent), #5f4bff);}
+
+    .small{font-size:13px; color:var(--muted); margin-top:10px}
+
+    /* Footer */
+    footer{margin-top:20px; text-align:center; color:var(--muted); font-size:13px}
+
+    /* utilities */
+    .muted{color:var(--muted)}
+    .center{display:flex; align-items:center; justify-content:center}
+
+  </style>
 </head>
 <body>
-    <h1>Smart Resume Analyzer</h1>
-    <form action="/analyze" method="post" enctype="multipart/form-data">
-        <label>Upload Resume (PDF):</label>
-        <input type="file" name="resume" accept=".pdf" required><br><br>
+  <div class="wrap">
+    <nav class="nav" role="navigation">
+      <div class="brand">SMART RESUME ANALYZER</div>
+      <div class="navlinks">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+      </div>
+    </nav>
 
-        <label>Upload Job Description (optional, PDF or TXT):</label>
-        <input type="file" name="jobdesc" accept=".pdf,.txt"><br><br>
+    <main class="grid">
+      <!-- Left: Hero + How it works -->
+      <section class="hero">
+        <h1>Resume Analyzer</h1>
+        <p>Upload your resume to get a focused report: keyword gaps, match score against a job description, and suggestions to improve.</p>
 
-        <button type="submit">Analyze</button>
-    </form>
+        <div style="margin-top:20px;">
+          <h3 style="margin-bottom:10px;">How it works</h3>
+          <div class="how">
+            <div class="step">
+              <h4>Upload</h4>
+              <p>Provide your resume (PDF) and optionally a job description (PDF/TXT).</p>
+            </div>
+            <div class="step">
+              <h4>Analyze</h4>
+              <p>NLP-driven parsing finds skill keywords and calculates a match score.</p>
+            </div>
+            <div class="step">
+              <h4>Improve</h4>
+              <p>Get targeted suggestions and a list of missing keywords to add.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <script>
-        // Placeholder for future interactivity
-        console.log("Index page loaded");
-    </script>
+      <!-- Right: Upload card -->
+      <aside class="card" aria-labelledby="upload-title">
+        <h3 id="upload-title">Start analysis</h3>
+
+        <form id="analyzeForm" action="/analyze" method="post" enctype="multipart/form-data">
+          <label class="filewrap" for="resumeFile" title="Upload resume (PDF)">
+            <input id="resumeFile" type="file" name="resume" accept=".pdf" required>
+            <div class="btn-file" id="resumeBtn">📄 Upload Resume (PDF)</div>
+            <div class="file-info" id="resumeInfo">No file chosen</div>
+          </label>
+
+          <label class="filewrap" for="jdFile" title="Optional: upload job description">
+            <input id="jdFile" type="file" name="jobdesc" accept=".pdf,.txt">
+            <div class="btn-file" id="jdBtn">📎 Upload Job Description (optional)</div>
+            <div class="file-info" id="jdInfo">No file chosen</div>
+          </label>
+
+          <button type="submit" class="analyze-btn">Analyze</button>
+          <div class="small">Tip: Upload a job description to get a tailored score for that role.</div>
+        </form>
+      </aside>
+    </main>
+
+    <footer>
+      Built with ❤️ · <span class="muted">NLP • Flask • PyPDF2</span>
+    </footer>
+  </div>
+
+  <script>
+    // File button wiring (makes nice button behave as file input)
+    const resumeFile = document.getElementById('resumeFile');
+    const resumeBtn = document.getElementById('resumeBtn');
+    const resumeInfo = document.getElementById('resumeInfo');
+
+    const jdFile = document.getElementById('jdFile');
+    const jdBtn = document.getElementById('jdBtn');
+    const jdInfo = document.getElementById('jdInfo');
+
+    resumeBtn.addEventListener('click', ()=> resumeFile.click());
+    jdBtn.addEventListener('click', ()=> jdFile.click());
+
+    resumeFile.addEventListener('change', () => {
+      if (resumeFile.files.length) resumeInfo.textContent = resumeFile.files[0].name;
+      else resumeInfo.textContent = "No file chosen";
+    });
+
+    jdFile.addEventListener('change', () => {
+      if (jdFile.files.length) jdInfo.textContent = jdFile.files[0].name;
+      else jdInfo.textContent = "No file chosen";
+    });
+
+    // Basic client-side validation
+    document.getElementById('analyzeForm').addEventListener('submit', function(e){
+      if (!resumeFile.files.length) {
+        e.preventDefault();
+        alert('Please upload a resume PDF before analyzing.');
+      }
+    });
+  </script>
 </body>
 </html>

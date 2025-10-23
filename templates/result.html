@@ -1,45 +1,169 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Analysis Result</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 30px;
-            background-color: #f9f9f9;
-        }
-        h1 {
-            color: #333;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        a {
-            text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        a:hover {
-            color: #45a049;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Resume Analyzer — Result</title>
+  <style>
+    :root{
+      --bg:#0b0d0f;
+      --panel:#0f1416;
+      --muted:#9aa3ad;
+      --accent:#7c5cff;
+      --card:#111418;
+      --radius:14px;
+      --maxw:980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(124,92,255,0.06), transparent 8%),
+                  linear-gradient(180deg, #071014 0%, #0b0d0f 100%);
+      color:#e6eef6; padding:36px 18px; display:flex; justify-content:center;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .wrap{width:100%; max-width:var(--maxw);}
+
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 22px; background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-radius:12px; margin-bottom:22px; box-shadow: 0 6px 30px rgba(2,6,10,0.6);
+    }
+    .brand{font-weight:700; letter-spacing:1px; font-size:16px; color: #fff;}
+    .navlinks{display:flex; gap:18px}
+    .nav a{color:var(--muted); text-decoration:none; font-size:14px}
+    .nav a:hover{color:#fff}
+
+    .panel{background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); padding:26px; border-radius:var(--radius); box-shadow: 0 10px 40px rgba(2,6,10,0.6);}
+
+    .title-row{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
+    .title-row h1{margin:0; font-size:32px}
+    .meta{color:var(--muted); font-size:14px}
+
+    .content{display:grid; grid-template-columns: 360px 1fr; gap:20px; margin-top:18px;}
+    @media (max-width:980px){ .content{grid-template-columns:1fr}}
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px; border-radius:12px;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+
+    /* Score card */
+    .score-large{font-size:64px; font-weight:700; margin:8px 0 6px; color:#fff}
+    .bar-wrap{height:14px; background:rgba(255,255,255,0.04); border-radius:999px; overflow:hidden; margin:12px 0;}
+    .bar{height:100%; border-radius:999px; width:0%; background:linear-gradient(90deg,var(--accent), #5f4bff); transition: width .9s cubic-bezier(.2,.9,.3,1);}
+
+    .missing-list{margin:0;padding-left:18px;color:var(--muted); font-size:15px}
+    .missing-list li{margin-bottom:8px}
+
+    .suggestions{color:var(--muted); font-size:14px; line-height:1.6}
+
+    .actions{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap}
+    .btn{padding:10px 14px; border-radius:10px; cursor:pointer; border:none;}
+    .btn-primary{background:linear-gradient(90deg,var(--accent), #5f4bff); color:#fff; font-weight:700; box-shadow: 0 10px 28px rgba(92,64,255,0.12);}
+    .btn-ghost{background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03)}
+
+    .right-detail{padding:14px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));}
+
+    footer{margin-top:20px; text-align:center; color:var(--muted); font-size:13px}
+  </style>
 </head>
 <body>
-    <h1>Resume Analysis Result</h1>
-    <p><strong>Score:</strong> {{ score }}%</p>
-    <p><strong>Missing Keywords:</strong></p>
-    <ul>
-        {% for keyword in missing_keywords %}
-        <li>{{ keyword }}</li>
-        {% endfor %}
-    </ul>
-    <a href="/">Analyze Another Resume</a>
+  <div class="wrap">
+    <nav class="nav">
+      <div class="brand">SMART RESUME ANALYZER</div>
+      <div class="navlinks">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+      </div>
+    </nav>
 
-    <script>
-        // Placeholder for future interactivity
-        console.log("Result page loaded");
-    </script>
+    <section class="panel">
+      <div class="title-row">
+        <div>
+          <h1>Analysis Result</h1>
+          <div class="meta">A concise report of your resume matched against selected keywords</div>
+        </div>
+        <div class="meta">Generated: {{ generation_time if generation_time else "" }}</div>
+      </div>
+
+      <div class="content">
+        <!-- Left column: Score + missing -->
+        <div class="card">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+            <div>
+              <div style="font-size:14px; color:var(--muted)">Score</div>
+              <div class="score-large">{{ score }}%</div>
+            </div>
+            <div style="text-align:right; color:var(--muted)">
+              <div style="font-weight:600">Keywords checked</div>
+              <div style="font-size:14px">{{ total_keywords if total_keywords else "—" }}</div>
+            </div>
+          </div>
+
+          <div class="bar-wrap" aria-hidden="true">
+            <div id="scoreBar" class="bar" style="width:0%"></div>
+          </div>
+
+          <h3 style="margin-top:18px; margin-bottom:8px">Missing Keywords</h3>
+          <ul class="missing-list">
+            {% if missing_keywords %}
+              {% for kw in missing_keywords %}
+                <li>{{ kw }}</li>
+              {% endfor %}
+            {% else %}
+              <li style="color:var(--muted)">None — good job! Consider adding more advanced keywords relevant to your role.</li>
+            {% endif %}
+          </ul>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="downloadReport">Download Report</button>
+            <a href="/" class="btn btn-ghost">Analyze Another</a>
+          </div>
+        </div>
+
+        <!-- Right column: Suggestions / detail -->
+        <div class="right-detail">
+          <h3 style="margin-top:0">Suggestions</h3>
+          <p class="suggestions">
+            {% if missing_keywords %}
+              Consider adding the highlighted keywords to the relevant sections (Skills, Projects, Experience) in your resume.
+              For technical keywords, include brief context — e.g., "Machine Learning (classification, regression)", "TensorFlow (models deployed in production)".
+            {% else %}
+              Your resume matches the provided keyword set well. Consider improving readability and emphasizing impact (quantified results).
+            {% endif %}
+          </p>
+
+          <h4 style="margin-top:18px">Quick tips</h4>
+          <ul style="color:var(--muted); padding-left:18px; margin-top:8px">
+            <li>Use concise bullet points and quantify results where possible.</li>
+            <li>Place core skills near the top in a "Skills" section.</li>
+            <li>Tailor your resume per job — upload a job description for a tailored report.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Built with ❤️ · <span style="color:var(--muted)">Smart Resume Analyzer</span>
+    </footer>
+  </div>
+
+  <script>
+    // Animate score bar on load
+    (function(){
+      const score = Number("{{ score if score is not none else 0 }}");
+      const bar = document.getElementById('scoreBar');
+      // clamp
+      const w = Math.max(0, Math.min(100, score));
+      setTimeout(()=> bar.style.width = w + '%', 80);
+
+      // Download button placeholder
+      document.getElementById('downloadReport').addEventListener('click', function(){
+        alert('Download report feature coming soon — will generate a PDF summary.');
+      });
+    })();
+  </script>
 </body>
 </html>
